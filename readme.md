@@ -69,8 +69,7 @@ finance_tracker/
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/<ваш-логин>/<название-репозитория>.git
-   cd <название-репозитория>
+   git clone https://github.com/LLangreSS/omis2
    ```
 2. Запустите приложение:
    ```bash
