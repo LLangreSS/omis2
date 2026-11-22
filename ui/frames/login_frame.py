@@ -27,31 +27,32 @@ class LoginFrame(tk.Frame):
         btn_frame.pack(pady=20)
 
         tk.Button(btn_frame, text="Войти", width=15, command=self.do_login).pack(side="left", padx=5)
-        tk.Button(
-            btn_frame,
-            text="Войти как Админ",
-            width=18,
-            command=lambda: self.quick_login("admin"),
-        ).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="Войти как Админ", width=18, command=self.admin_login).pack(side="left", padx=5)
 
 
-    def do_login(self):
+    def _authenticate(self):
         login = self.login_entry.get().strip()
         password = self.pass_entry.get().strip()
         for u in self.controller.system.users:
             if u.login == login and u.password == password:
-                self.controller.current_user = u
-                target = "AdminFrame" if u.role == "admin" else "DashboardFrame"
-                self.controller.show_frame(target)
-                return
-        messagebox.showerror("Ошибка входа", "Неверный логин или пароль")
+                return u
+        return None
 
-    def quick_login(self, role: str):
-        for u in self.controller.system.users:
-            if u.role == role:
-                self.login_entry.delete(0, "end")
-                self.login_entry.insert(0, u.login)
-                self.pass_entry.delete(0, "end")
-                self.pass_entry.insert(0, u.password)
-                self.do_login()
-                return
+    def do_login(self):
+        user = self._authenticate()
+        if not user:
+            messagebox.showerror("Ошибка входа", "Неверный логин или пароль")
+            return
+        self.controller.current_user = user
+        self.controller.show_frame("DashboardFrame")
+
+    def admin_login(self):
+        user = self._authenticate()
+        if not user:
+            messagebox.showerror("Ошибка входа", "Неверный логин или пароль")
+            return
+        if user.role != "admin":
+            messagebox.showerror("Ошибка доступа", "У данного пользователя нет прав администратора")
+            return
+        self.controller.current_user = user
+        self.controller.show_frame("AdminFrame")
