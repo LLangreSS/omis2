@@ -49,7 +49,9 @@ class LoginFrame(tk.Frame):
     def quick_login(self, role: str):
         for u in self.controller.system.users:
             if u.role == role:
-                self.controller.current_user = u
-                target = "AdminFrame" if role == "admin" else "DashboardFrame"
-                self.controller.show_frame(target)
+                self.login_entry.delete(0, "end")
+                self.login_entry.insert(0, u.login)
+                self.pass_entry.delete(0, "end")
+                self.pass_entry.insert(0, u.password)
+                self.do_login()
                 return
